@@ -1,0 +1,7 @@
+NumInputs:      1
+NumHidden:      12
+DirectLinks:    1
+NetworkSeed:    051201
+LowRange:       -0.2
+HighRange:      +0.2
+NetworkName:    BinaryNetwork

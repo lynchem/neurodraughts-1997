@@ -1,0 +1,6 @@
+LRate1:         0.0
+LRate2:         0.0
+Momentum:       0.9
+Gamma(Decay):   0.98
+Lambda(TD?):    0.1
+
