@@ -14,8 +14,9 @@
 **************************************************************/
 
 #include "dgame.h"
-#include <fstream.h>
-#include <classlib/date.h>
+#include <fstream>
+
+using namespace std;
 
 //init the board - redundant
 DraughtsGame::DraughtsGame()
@@ -27,7 +28,7 @@ DraughtsGame::DraughtsGame()
 	a set number of games between two DirectNet's, using a specified board.
    It ouputs the results and returns numwins*2 + numdraws.
 */
-int DraughtsGame::AutoPlay(char* fname, int train, int numofgames, BOARD* board, float g, float l, DirectNet* opp1, DirectNet* opp2, float drawb, float drawr)
+int DraughtsGame::AutoPlay(const string& fname, int train, int numofgames, BOARD* board, float g, float l, DirectNet* opp1, DirectNet* opp2, float drawb, float drawr)
 {
 	int 	opp1won, opp2won, draw;
    int 	i, over;
@@ -109,18 +110,17 @@ int DraughtsGame::AutoPlay(char* fname, int train, int numofgames, BOARD* board,
 }
 
 /* Init a game: set's up the board and PDN file for recording */
-void	DraughtsGame::InitGame(char* fname, BOARD* board, int train)
+void	DraughtsGame::InitGame(const string& fname, BOARD* board, int train)
 {
-	TDate	mydate;
    char 	buf[64];
 
    copyordboard(&gameboard, board);
 
-   if(fname != NULL)
+   /*if(fname != NULL)
    {
    	//save PDN info
    	recording = 1;
-      pdnfile.open(fname, ios::app);
+      pdnfile.open(fname.c_str(), ios::app);
    	if(!pdnfile)
       	cerr<<"Error opening: "<<fname<<" for output!\n";
 
@@ -130,8 +130,7 @@ void	DraughtsGame::InitGame(char* fname, BOARD* board, int train)
 
       rnet->GetName(buf);
       pdnfile<<"[Red   \""<<buf<<"\"]\n";
-      pdnfile<<"[Date  \""<<mydate<<"\"]\n\n";
-   }
+   }*/
    training1= training2 = 0;
 
 	//whose being trained?

@@ -17,12 +17,15 @@
 #ifndef __EVALNET
 #define __EVALNET
 
-#include <iostream.h>
-#include <fstream.h>
+#include <iostream>
+#include <string>
+#include <fstream>
 #include <math.h>
 
 #define ONVALUE	1
 #define OFFVALUE	0
+
+using namespace std;
 
 class EvalNet
 {
@@ -31,7 +34,7 @@ private:
    int 		numhidden;
    bool		directlinks;	//direct in-out connections?
 
-   char		name[64];		//name of the network
+   string *name;		//name of the network
 
    float**	weights1;		//input layer - hidden weights
    float*	weights2;		//hidden layer - ouput weights
@@ -73,12 +76,12 @@ private:
 public:
 
 	EvalNet();
-   EvalNet(int numinputs, int numhidden, bool dlinks, unsigned seed, float lowrange, float highrange, float bias, char* n);
-   EvalNet(char* loadfile, float bias );
+   EvalNet(int numinputs, int numhidden, bool dlinks, unsigned seed, float lowrange, float highrange, float bias, const string& name);
+   EvalNet(const string& loadfile, float bias );
     ~EvalNet();
 
-   void	GetName(char* name);
-   void	SetName(char* name);
+   const string& GetName();
+   void	SetName(const string& name);
 
    float	EvaluateNet(float* inputvector);
 	void 	InitTDTrain(float* iv, float gamma, float lambda);
@@ -94,8 +97,8 @@ public:
    float getmaxerr(void);
    float	getavgerr(void);
 
-   void 	SaveNet(char* savefile);
- 	void 	LoadWeights(char* loadfile);
+   void 	SaveNet(const string& savefile);
+ 	void 	LoadWeights(const string& loadfile);
 
    void 	Report();
    int	NumInputs();

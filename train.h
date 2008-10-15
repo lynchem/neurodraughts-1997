@@ -16,8 +16,8 @@
 #ifndef __TDTRAIN
 #define __TDTRAIN
 
-#include <iostream.h>
-#include <fstream.h>
+#include <iostream>
+#include <fstream>
 #include "dirnet.h"
 #include "board.h"
 

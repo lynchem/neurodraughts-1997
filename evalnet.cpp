@@ -14,11 +14,13 @@
 	distributed.
 **************************************************************/
 
-#include <iostream.h>
-#include <fstream.h>
+#include <iostream>
+#include <fstream>
 #include <stdlib.h>
 #include <math.h>
 #include "evalnet.h"
+
+using namespace std;
 
 #define TANH
 
@@ -69,7 +71,7 @@ EvalNet::~EvalNet()
 /* The constructor allocates memory for the Net aswell as initialising all
 	the weights to a random value between lowrange and highrange. It also
    sets up the debug file if any. */
-EvalNet::EvalNet(int ninputs, int nhidden, bool dlinks, unsigned theseed, float lowrange, float highrange, float bias, char* n)
+EvalNet::EvalNet(int ninputs, int nhidden, bool dlinks, unsigned theseed, float lowrange, float highrange, float bias, const string& name)
 {
    SetBias(bias);
 
@@ -79,7 +81,7 @@ EvalNet::EvalNet(int ninputs, int nhidden, bool dlinks, unsigned theseed, float 
    seed = theseed;
 
    //set the name
-   strcpy(name,n);
+   SetName(name);
 
    //allocate all the memory required!
    AllocateMem();
@@ -89,20 +91,22 @@ EvalNet::EvalNet(int ninputs, int nhidden, bool dlinks, unsigned theseed, float 
 
 /* The constructor allocates memory for the Net aswell as reading in the
 	the weights from the file specified. */
-EvalNet::EvalNet(char* loadfile, float bias)
+EvalNet::EvalNet(const string& loadfile, float bias)
 {
    ifstream nf;			//load the network from this file
 
    SetBias(bias);
 
-   nf.open(loadfile);
+   nf.open(loadfile.c_str());
    if(!nf)
    {
    	cerr<<"Error opening "<<loadfile<<" for input!";
       return;
    }
    //get name
-   nf.getline(name, sizeof(name));
+   char buf[64];
+   nf.getline(buf, sizeof(buf));
+   name = new string(buf);
 
    //get dimensions
    nf>>numinputs>>numhidden>>directlinks; //add error check later!
@@ -115,7 +119,7 @@ EvalNet::EvalNet(char* loadfile, float bias)
 }
 
 /* Load Weights takes a filename.*/
-void EvalNet::LoadWeights(char* loadfile)
+void EvalNet::LoadWeights(const string& loadfile)
 {
 	float dummy;
    char buf[64];
@@ -123,7 +127,7 @@ void EvalNet::LoadWeights(char* loadfile)
    int i,j;
 
 	//open file and load weights
-   nf.open(loadfile);
+   nf.open(loadfile.c_str());
 	if(!nf)
    {
    	cerr<<"Error opening "<<loadfile<<" for input!\n";
@@ -162,14 +166,17 @@ void EvalNet::LoadWeights(char* loadfile)
    nf.close();
 }
 
-void EvalNet::GetName(char* n)
+const string& EvalNet::GetName()
 {
-	strcpy(n, name);
+	return *name;
 }
 
-void EvalNet::SetName(char* n)
+void EvalNet::SetName(const string& name)
 {
-	strcpy(name, n);
+	if(this->name) {
+		delete this->name;
+	}
+	this->name = new string(name);
 }
 
 
@@ -343,12 +350,12 @@ void EvalNet::UpdateElig(float* iv)
 
 
 /* save the net to a file */
-void EvalNet::SaveNet(char* savefile)
+void EvalNet::SaveNet(const string& savefile)
 {
 	int i,j;
  	ofstream sf;
 
-   sf.open(savefile);
+   sf.open(savefile.c_str());
    if(!sf)
    {
    	cerr<<"Cannot open "<<savefile<<" for output!\n";
@@ -534,7 +541,7 @@ float getrealrandom(int irange)
 	int r;
    float rfloat;
 
-	r = random(irange);
+	r = random()%irange;
    rfloat=r;
    rfloat /= 1000;
 
@@ -592,45 +599,6 @@ int EvalNet::NumHidden()
 
 
 
-/* old bp
- training returns the error!
-float EvalNet::BPTrainNet(float* inputvector, float expectedvalue)
-{
-	float out,outerror;
-   int i,j;
-
-   df<<"Wah! I'm being trained!\n";
-
-   //evalute the network
-   out = EvaluateNet(inputvector);
-
-   //calculate error for output unit - use hyperbolic now - new derivitive
-   //outerror = (expectedvalue - out) * out * (1.0 - out);
-   outerror = (expectedvalue - out) * DERIV(out);
-
-   //update hid-out weights
-   for (i=0; i<=numhidden; i++)
-   {
-      oldweights2[i] = (LRATE * outerror * hiddenunits[i])+ (MOMENTUM * oldweights2[i]);
-   	weights2[i] = weights2[i] + oldweights2[i];
-   }
-
-	for (i=0; i<numhidden; i++)
-   {
-   	//error signal of hidden unit - the hid units contribution to error -changed to hyper
-      //hiderror[i] = hiddenunits[i] * (1.0 - hiddenunits[i]) * outerror * weights2[i];
-      hiderror[i] = DERIV(hiddenunits[i]) * outerror * weights2[i];
-
-      //update in - hid weights
-      for (j=0; j<=numinputs; j++)
-      {
-      	oldweights1[j][i] = (LRATE * hiderror[i] * inputvector[j]) + (MOMENTUM * oldweights1[j][i]);
-      	weights1[j][i] = weights1[j][i] + oldweights1[j][i];
-      }
-   }
-   return outerror;
-}
-*/
 
 
 

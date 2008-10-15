@@ -16,6 +16,8 @@
 
 #include "player.h"
 
+using namespace std;
+
 inline int otherplayer(int p);
 int jumpcalc(XBOARD* xb, int pos, int dir);
 

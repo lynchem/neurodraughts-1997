@@ -14,7 +14,8 @@
 #ifndef __BOARDHEADER
 #define __BOARDHEADER
 
-#include <fstream.h>
+#include <fstream>
+#include <iostream>
 
 
 //im the board header file... weee

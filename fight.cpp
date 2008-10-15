@@ -17,7 +17,7 @@
 #include "board.h"
 #include "dgame.h"
 #include <time.h>
-#include <iostream.h>
+#include <iostream>
 
 void main(int argc, char** argv)
 {

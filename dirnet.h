@@ -18,8 +18,8 @@
 #include "evalnet.h"
 #include "board.h"
 #include "features.h"
-#include <iostream.h>
-#include <fstream.h>
+#include <iostream>
+#include <fstream>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -29,6 +29,7 @@
 
 typedef int (*ffunc)(BOARD*);
 
+using namespace std;
 
 class DirectNet
 {
@@ -50,30 +51,30 @@ private:
 
    float*	floatalloc(size_t size);
 
-   int		SetupFeatures(char* fname);
+   int		SetupFeatures(const string& fname);
 //   float**	ComputeTrainingV(BOARD** pboard, int moves);
    void		mapfeatures(BOARD* pboard);
 
 public:
 	DirectNet(int typeofnet, int nhidden, bool dlinks, unsigned seed,
-   			 float lowrange, float highrange, float bias, char* name,
-             char* featurefile);
-   DirectNet(char* fname, char* featuref, float bias);
+   			 float lowrange, float highrange, float bias, const string& name,
+             const string& featurefile);
+   DirectNet(const string& fname, const string& featuref, float bias);
    ~DirectNet();
 
    float	getmaxerr(void); //returns the maximum error encountered since init
    float	getavgerr(void); //returns a cumulation of error
 
-	void	GetName(char* name);
-	void	SetName(char* name);
+	const string& GetName();
+	void	SetName(const string& name);
 
 	void 	InitTDTrain(BOARD* board, float gamma, float lambda, int swapboard);
 	void 	TDTrain(BOARD* board, int swapboard);
    void 	TDFinal(float evalue);
 
 	float EvaluateNet(BOARD* pboard);
-   void 	SaveNet(char* fname);
-   void 	LoadWeights(char* fname);
+   void 	SaveNet(const string& fname);
+   void 	LoadWeights(const string& fname);
    void 	SetBias(float bias);
 	void 	SetLRate1(float lrate);
 	void 	SetLRate2(float lrate);
@@ -83,3 +84,4 @@ public:
 };
 
 #endif
+

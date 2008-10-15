@@ -20,6 +20,8 @@
 
 #include "features.h"
 
+using namespace std;
+
 //calculates the next bit of a feature
 int calculatenextbit(BOARD* b)
 {

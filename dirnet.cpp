@@ -13,10 +13,13 @@
 */
 
 #include "dirnet.h"
+#include <string>
+
+using namespace std;
 
 /* typeofnet specifies the type of mapping to be used , the rest map directly to their evalnet counterparts */
 DirectNet::DirectNet(int typeofnet, int numhidden, bool dlinks, unsigned seed,
-							float lowrange, float highrange, float bias, char* n, char* featuref)
+							float lowrange, float highrange, float bias, const string& n, const string& featuref)
 {
 	int numinputs;
 
@@ -39,7 +42,7 @@ DirectNet::DirectNet(int typeofnet, int numhidden, bool dlinks, unsigned seed,
 }
 
 /* load from file constructor */
-DirectNet::DirectNet(char* fname, char* featuref, float bias)
+DirectNet::DirectNet(const string& fname, const string& featuref, float bias)
 {
 	int numinputs, numbits;
 
@@ -67,10 +70,10 @@ DirectNet::DirectNet(char* fname, char* featuref, float bias)
 	iv = floatalloc(net->NumInputs()+1);
 }
 
-int DirectNet::SetupFeatures(char* featurefile)
+int DirectNet::SetupFeatures(const string& featurefile)
 {
 	//feature names
-	char* featurelist[NUMOFFEATURES] = {"PieceAdvantage", "PieceDisadvatange",
+	string featurelist[NUMOFFEATURES] = {"PieceAdvantage", "PieceDisadvatange",
                "PieceThreat", "PieceTake", "Advancement", "DoubleDiagonal",
                "BackrowBridge", "CentreControl", "XCentreControl",
           "TotalMobility", "Exposure", "KingCentreControl", "DiagonalMoment"};
@@ -102,7 +105,7 @@ int DirectNet::SetupFeatures(char* featurefile)
 	numfound = 0;
 
    //down to business
-   ff.open(featurefile);
+   ff.open(featurefile.c_str());
    ff>>feature>>numofbits;
    while(numofbits == 0)
    	ff>>feature>>numofbits;
@@ -112,7 +115,7 @@ int DirectNet::SetupFeatures(char* featurefile)
    {
    	//find the feature!
    	for(i=0; i<NUMOFFEATURES; i++)
-      	if(!strcmp(featurelist[i],feature))
+      	if(featurelist[i].compare(feature) == 0)
          {
          	numfound+=numofbits;
          	break;
@@ -259,13 +262,13 @@ void DirectNet::mapfeatures(BOARD* pboard)
 }
 
 //saves the net
-void DirectNet::SaveNet(char* fname)
+void DirectNet::SaveNet(const string& fname)
 {
 	net->SaveNet(fname);
 }
 
 //loads the net
-void DirectNet::LoadWeights(char* fname)
+void DirectNet::LoadWeights(const string& fname)
 {
 	net->LoadWeights(fname);
 }
@@ -281,12 +284,12 @@ float DirectNet::getavgerr(void)
 }
 
 //who am i?
-void DirectNet::GetName(char* name)
+const string& DirectNet::GetName()
 {
-	net->GetName(name);
+	return net->GetName();
 }
 
-void DirectNet::SetName(char* name)
+void DirectNet::SetName(const string& name)
 {
 	net->SetName(name);
 }

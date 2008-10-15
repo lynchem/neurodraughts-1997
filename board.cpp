@@ -17,6 +17,8 @@
 
 #include "board.h"
 
+using namespace std;
+
 /*initlialises a board to standard starting position */
 void initxboard(XBOARD* xb)
 {
@@ -215,7 +217,7 @@ int maptocoord(int i)
 /*print to file, boardlog - note: must change to take a file name */
 void printxboard(XBOARD* b)
 {
-	int i;
+/*	int i;
    fstream df;
 
    df.open("c:\\ul\\fyp\\nd\\boardlog.txt", ios::app);
@@ -247,13 +249,13 @@ void printxboard(XBOARD* b)
       df<<printpiece(b->p[i])<<" ";
 	df<<endl;
 
-   df.close();
+   df.close();*/
 }
 
 /*print to file, boardlog - note: must change to take a file name */
 void printboard(BOARD* b)
 {
-	int i;
+/*	int i;
    fstream df;
 
    df.open("c:\\ul\\fyp\\nd\\boardlog.txt", ios::app);
@@ -283,20 +285,20 @@ void printboard(BOARD* b)
       df<<printpiece(b->p[i])<<" ";
 	df<<endl<<endl;
 
-   df.close();
+   df.close();*/
 }
 
 //print a move
 void printmove(MOVE* m)
 {
-	int i;
+/*	int i;
    fstream df;
 
    df.open("c:\\ul\\fyp\\nd\\boardlog.txt", ios::app);
 
    df<<"MOVE from:"<<m->from<<" to:"<<m->to<<" ex:"<<m->exchange<<endl;
 
-   df.close();
+   df.close();*/
 }
 
 //print a piece- used by print board functions.

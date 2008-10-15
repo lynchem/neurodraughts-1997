@@ -20,9 +20,11 @@
 #include "evalnet.h"
 #include "dgame.h"
 #include <time.h>
-#include <iostream.h>
+#include <iostream>
 
-void main(int argc, char** argv)
+using namespace std;
+
+int main(int argc, char** argv)
 {
    //general bits
 	time_t 	s,e;
@@ -102,8 +104,8 @@ void main(int argc, char** argv)
    	cout<<"Loading Network from:\t\t"<<createfile<<endl;
    	opp1 = new DirectNet(createfile, featurefile, 1);
       //alter name of 2nd network
-      opp1->GetName(netname);
-      strcat(netname, " - Clone");
+      string name = opp1->GetName();
+      name.append(" - Clone");
       opp2 = new DirectNet(createfile, featurefile, 1);
       opp2->SetName(netname);
    }
@@ -224,6 +226,8 @@ void main(int argc, char** argv)
    delete opp1;
    delete opp2;
    delete game;
+   
+   return 1;
 }
 
 

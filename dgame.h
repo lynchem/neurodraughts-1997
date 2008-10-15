@@ -17,8 +17,8 @@
 #ifndef __DGAME
 #define __DGAME
 
-#include <iostream.h>
-#include <fstream.h>
+#include <iostream>
+#include <fstream>
 #include <stdlib.h>
 #include <stdio.h>
 #include "dirnet.h"
@@ -52,10 +52,10 @@ public:
 	DraughtsGame(); 
 
    BOARD* GetBoard();
-   int	AutoPlay(char* fname, int train, int numofgames, BOARD* board, float gamma, float lambda, DirectNet* opp1, DirectNet* opp2, float drawb, float draww);
+   int	AutoPlay(const string& fname, int train, int numofgames, BOARD* board, float gamma, float lambda, DirectNet* opp1, DirectNet* opp2, float drawb, float drawr);
    int   MakeBlackMove(void);
    int	MakeRedMove(void);
-   void	InitGame(char* fname, BOARD* board, int train);
+   void	InitGame(const string& fname, BOARD* board, int train);
    int	GameLength();
    void	EndGame(int whowon);
    int 	checkgameover();
