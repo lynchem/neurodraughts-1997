@@ -2,9 +2,9 @@
 
 NeuroDraughts was my final-year project at the University of Limerick in
 1997: a program that learns to play draughts by temporal difference learning.
-A learner network plays against a copy of itself, the champion. When the
-learner beats the champion convincingly, it becomes the new champion and
-training carries on.
+A learner network plays against a clone of itself, the champion. When the
+learner beats the champion convincingly, it is cloned to become the new
+champion, and training carries on.
 
 This repository is the program as I handed it in, then one commit for each
 mistake fixed in 2026. Each commit message says what was wrong, how it was
