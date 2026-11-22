@@ -1,7 +1,7 @@
 """Convert a network saved by nd into the format of the 2026 engine, so that
 the 2026 engine can play it.
 
-usage: python3 tondnet.py NET FTR ENCODER OUT [NAME]
+usage: python3 tondnet.py NET FTR ENCODER OUT [NAME [GENERATION]]
 
 ENCODER says how the network sees the board:
   legacy   the 1997 features, computed as the 1997 code computed them
@@ -12,6 +12,7 @@ import sys
 
 net, ftr, enc, out = sys.argv[1:5]
 name = sys.argv[5] if len(sys.argv) > 5 else net
+generation = int(sys.argv[6]) if len(sys.argv) > 6 else 0
 order = ["PieceAdvantage", "PieceDisadvatange", "PieceThreat", "PieceTake",
          "Advancement", "DoubleDiagonal", "BackrowBridge", "CentreControl",
          "XCentreControl", "TotalMobility", "Exposure", "KingCentreControl",
@@ -44,5 +45,5 @@ assert len(w3) == ni + 1, len(w3)
 p = w1[:ni * nh] + w1[ni * nh:] + w2[:nh] + [w2[nh] + w3[ni]] + w3[:ni]
 with open(out, 'w') as f:
     f.write(f"NDNET 1\nname {name}\nencoder {encoder}\nhidden {nh}\n"
-            f"activation tanh\ndirect 1\ngeneration 0\ngames 0\nweights {len(p)}\n")
+            f"activation tanh\ndirect 1\ngeneration {generation}\ngames 0\nweights {len(p)}\n")
     f.write(' '.join(repr(x) for x in p) + '\n')
