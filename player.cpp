@@ -8,6 +8,8 @@
    to make for NeuroDraughts.
    31/5/97 - Alpha/Beta has been commented out due to strange
    			 errors in judgement.
+   2026    - Put back. The bounds were shared by the whole tree; now
+   			 each node gets its own.
 				
 	Permission is granted to Andrea Omodeo to modify this source
 	for use in a Freeware program as long as the source is not
@@ -19,11 +21,24 @@
 using namespace std;
 
 inline int otherplayer(int p);
+static float search(BOARD* b, MOVE* m, DirectNet* net, int player, int totaldepth, int depth, float alpha, float beta);
 
-/* the func - minimum and maximum correspond to alpha and beta repsectively.
-	These names used instead as they better convey their use
+/* the func - minimum and maximum were meant to be alpha and beta, but a
+	bound belongs to one node of the tree and must be passed down by value,
+   so they are no longer used. search() does the work.
  */
 float SuggestMove(BOARD* b, MOVE* m, DirectNet* net, int player, int totaldepth, int depth, float* minimum, float* maximum)
+{
+	return search(b, m, net, player, totaldepth, depth, -1000.0, +1000.0);
+}
+
+/* minimax with alpha-beta pruning. alpha is the most the max player above
+	is sure of, beta the least the min player above is sure of. A branch is
+   cut only when its value could not replace the best found so far by the
+   rules used here (a later move replaces an earlier one only if it is
+   strictly better), so the move chosen is the one a full search would
+   choose. */
+static float search(BOARD* b, MOVE* m, DirectNet* net, int player, int totaldepth, int depth, float alpha, float beta)
 {
    //arrays of moves and jumps
    MOVE	jumps[MAXJUMPS];
@@ -141,27 +156,33 @@ float SuggestMove(BOARD* b, MOVE* m, DirectNet* net, int player, int totaldepth,
 		   {
 		   	MOVE dummymove;
 		 		maptoboard(&normalboard, &temp);
-			   res = SuggestMove(&normalboard, &dummymove, net, otherplayer(player), 5000, depth-1, minimum, maximum);
+			   res = search(&normalboard, &dummymove, net, otherplayer(player), 5000, depth-1, alpha, beta);
 		   }
          if(mini)
          {
-         	//alpha beta prune!
-//         	if(res <= *minimum)
-//            	return res;
             if(res < besteval)
             	besteval = res;
+         	//alpha beta prune! the max player above takes only a value
+            //strictly greater than alpha
+         	if(besteval <= alpha)
+            	return besteval;
+            if(besteval < beta)
+            	beta = besteval;
          }
          else
          {
-         	//alpha beta prune!
-//         	if((res >= *maximum) && !top)
-//            	return res;
          	if(res > besteval)
             {
 	           	besteval = res;
                if(top)
 	               *m = jumps[i];
             }
+         	//alpha beta prune! the min player above takes only a value
+            //strictly less than beta
+         	if(besteval >= beta)
+            	return besteval;
+            if(besteval > alpha)
+            	alpha = besteval;
          }
 
       }
@@ -187,21 +208,21 @@ float SuggestMove(BOARD* b, MOVE* m, DirectNet* net, int player, int totaldepth,
 		   {
 		   	MOVE dummymove;
 		 		maptoboard(&normalboard, &temp);
-		      res = SuggestMove(&normalboard, &dummymove, net, otherplayer(player), 5000, depth-1, minimum, maximum);
+		      res = search(&normalboard, &dummymove, net, otherplayer(player), 5000, depth-1, alpha, beta);
 		   }
          if(mini)
          {
-         	//alpha beta prune!
-//         	if(res <= *minimum)
-//            	return res;
             if(res < besteval)
             	besteval = res;
+         	//alpha beta prune! the max player above takes only a value
+            //strictly greater than alpha
+         	if(besteval <= alpha)
+            	return besteval;
+            if(besteval < beta)
+            	beta = besteval;
          }
          else
          {
-           	//alpha beta prune!
-//         	if((res >= *maximum) && !top)
-//            	return res;
          	if(res > besteval)
             {
 	           	besteval = res;
@@ -212,6 +233,11 @@ float SuggestMove(BOARD* b, MOVE* m, DirectNet* net, int player, int totaldepth,
 	               m->exchange = 0;
                }
             }
+         	//alpha beta prune! as above
+         	if(besteval >= beta)
+            	return besteval;
+            if(besteval > alpha)
+            	alpha = besteval;
          }
 
       }
@@ -227,12 +253,6 @@ float SuggestMove(BOARD* b, MOVE* m, DirectNet* net, int player, int totaldepth,
          besteval = -1;
       }
    }
-  	//alpha beta stuff!
-//   if(mini)
-//   	*minimum = besteval;
-//   else
-//   	*maximum = besteval;
-
    return besteval;
 }
 
