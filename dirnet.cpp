@@ -138,12 +138,14 @@ int DirectNet::SetupFeatures(const string& featurefile)
 
    //allocate array of function indexes
 	input_map = (ffunc*)calloc(numfound, sizeof(ffunc));
+	input_width = (int*)calloc(numfound, sizeof(int));
 
    int currentbit = 0;
    for(i=0; i<NUMOFFEATURES; i++)
    {
    	if(bitstouse[i] >= 1)
       {
+      	input_width[currentbit] = bitstouse[i];
       	input_map[currentbit++] = feature_funcs[i];
          for(j = 2; j<=bitstouse[i]; j++)
          	input_map[currentbit++] = calculatenextbit;
@@ -156,6 +158,7 @@ DirectNet::~DirectNet()
 {
 	delete net;
   	free(input_map);
+  	free(input_width);
    free(iv);
 }
 
@@ -257,7 +260,16 @@ void DirectNet::mapfeatures(BOARD* pboard)
    else
    {
    	for(i=0; i<numfound; i++)
+      {
       	iv[i] = input_map[i](pboard);
+
+         //a value too big for its bits is written as all ones
+         if(input_width[i] > 0 && pboard->p[0] >= (1 << input_width[i]))
+         {
+         	pboard->p[0] = (1 << input_width[i]) - 1;
+            iv[i] = ONVALUE;
+         }
+      }
    }
 }
 

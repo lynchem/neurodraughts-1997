@@ -46,6 +46,7 @@ private:
    int	bitstouse[NUMOFFEATURES];
 
 	ffunc*	input_map;
+   int*	input_width;	//for the first input of each feature, its number of bits
    int	numfound;
 
 

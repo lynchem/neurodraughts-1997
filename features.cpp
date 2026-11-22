@@ -23,19 +23,25 @@
 using namespace std;
 
 //calculates the next bit of a feature
+/* the lowest bit of the value being written out. Values have already been
+	limited to what their bits can hold, so the value is never negative */
+int firstbit(BOARD* b)
+{
+	if(b->p[0] % 2 == 1) return ONVALUE;
+   else return OFFVALUE;
+}
+
 int calculatenextbit(BOARD* b)
 {
    b->p[0]/=2;
-   if((b->p[0]==1)||(b->p[0]>0 && (b->p[0]%2)==1)) return ONVALUE;
-   else return OFFVALUE;
+   return firstbit(b);
 }
 
 /* set to 1 if person has a piece advantage */
 int pieceadvantage(BOARD* b)
 {
    b->p[0]=piececount(b);
-   if((b->p[0]==1)||(b->p[0]>0 && (b->p[0]%2)==1)) return ONVALUE;
-   else return OFFVALUE;
+   return firstbit(b);
 }
 
 //if person has disadvantage
@@ -44,8 +50,7 @@ int piecedisadvantage(BOARD* b)
    b->p[0]=piececount(b);
    if(b->p[0] >= 0) b->p[0] = 0;
    else b->p[0] = abs(b->p[0]);
-   if((b->p[0]==1)||(b->p[0]<0 && (b->p[0]%2)==1)) return ONVALUE;
-   else return OFFVALUE;
+   return firstbit(b);
 }
 
 //advancement - pieces in 5/6 rows gets points, 3/4 get minus
@@ -66,8 +71,7 @@ int advancement(BOARD* b)
 
    //-8 to 0 = represented by 0-8, 0-8 = 9-16
    b->p[0]=black+8;
-   if((b->p[0]==1)||(b->p[0]<0 && (b->p[0]%2)==1)) return ONVALUE;
-   else return OFFVALUE;
+   return firstbit(b);
 }
 
 //back row bridge - if bridge exists then +1 else -1
@@ -75,12 +79,16 @@ int backrowbridge(BOARD* pboard)
 {
 	int i;
 
+   pboard->p[0] = 0;
    for(i=1; i<=32; i++)
    	if(pboard->p[i] == REDKING)
 			return OFFVALUE;
 
    if (pboard->p[1]==BLACKMAN && pboard->p[3] == BLACKMAN)
+   {
+   	pboard->p[0] = 1;
    	return ONVALUE;
+   }
    else return OFFVALUE;
 }
 
@@ -88,8 +96,7 @@ int backrowbridge(BOARD* pboard)
 int centrecontrol(BOARD* b)
 {
    b->p[0]=checkcentre(b, BLACKMAN);
-   if((b->p[0]==1)||(b->p[0]>0 && (b->p[0]%2)==1)) return ONVALUE;
-   else return OFFVALUE;
+   return firstbit(b);
 }
 
 //centre control II - if occupied by pieces or could move to same squares
@@ -100,8 +107,7 @@ int xcentrecontrol(BOARD* b)
 
    b->p[0]=rcentrecontrolcalc(&xb, b);
 
-   if((b->p[0]==1)||(b->p[0]>0 && (b->p[0]%2)==1)) return ONVALUE;
-   else return OFFVALUE;
+   return firstbit(b);
 }
 
 
@@ -121,8 +127,7 @@ int doublediagonal(BOARD* b)
    }
 
    b->p[0]=ret;
-   if((b->p[0]==1)||(b->p[0]>0 && (b->p[0]%2)==1)) return ONVALUE;
-   else return OFFVALUE;
+   return firstbit(b);
 }
 
 //diagonal moment value +1 for two removed +2 for one removed +3 for on it
@@ -141,8 +146,7 @@ int diagonalmoment(BOARD* b)
       }
    }
    b->p[0]=ret;
-   if((b->p[0]==1)||(b->p[0]>0 && (b->p[0]%2)==1)) return ONVALUE;
-   else return OFFVALUE;
+   return firstbit(b);
 }
 
 //exposure - credited with one if exists black piece that is flanked on either diagonal by empty squares
@@ -169,8 +173,7 @@ int exposure(BOARD* b)
    }
 
    b->p[0] = ret;
-   if((b->p[0]>7)||(b->p[0]==1)||(b->p[0]>0 && (b->p[0]%2)==1)) return ONVALUE;
-   else return OFFVALUE;
+   return firstbit(b);
 }
 
 //king centre control
@@ -181,8 +184,7 @@ int kingcentrecontrol(BOARD* b)
 	black= checkcentre(b, BLACKKING);
 
    b->p[0]=black;
-   if((b->p[0]==1)||(b->p[0]>0 && (b->p[0]%2)==1)) return ONVALUE;
-   else return OFFVALUE;
+   return firstbit(b);
 }
 
 //total mobility - any square where the red player can move to.. uses extended board
@@ -202,8 +204,7 @@ int totalmobility(BOARD* b)
       }
 	}
    b->p[0] = ret;
-   if((b->p[0]>15)||(b->p[0]==1)||(b->p[0]>0 && (b->p[0]%2)==1)) return ONVALUE;
-   else return OFFVALUE;
+   return firstbit(b);
 }
 
 //added 15/04/97 - could opponent take me .
@@ -218,8 +219,7 @@ int piecethreat(BOARD* b)
 
    b->p[0] = ret;
 
-   if((b->p[0]>7)||(b->p[0]==1)||(b->p[0]>0 && (b->p[0]%2)==1)) return ONVALUE;
-   else return OFFVALUE;
+   return firstbit(b);
 }
 
 //added 15/04/97 - if we could move again, could we take a piece? - he couldn't take any
@@ -234,8 +234,7 @@ int piecetake(BOARD* b)
 
    b->p[0] = ret;
 
-   if((b->p[0]>7)||(b->p[0]==1)||(b->p[0]>0 && (b->p[0]%2)==1)) return ONVALUE;
-   else return OFFVALUE;
+   return firstbit(b);
 }
 
 //how many of his pieces are under threat from safe pieces?
@@ -280,8 +279,7 @@ int threat(BOARD* b)
    }
    b->p[0] = ret;
 
-   if((b->p[0]>7)||(b->p[0]==1)||(b->p[0]>0 && (b->p[0]%2)==1)) return ONVALUE;
-   else return OFFVALUE;
+   return firstbit(b);
 }
 
 
@@ -295,7 +293,7 @@ int calcblackpiecethreat(XBOARD* xb)
       {
       	if((j=jumpsavail(xb, i))!=NONE)
          {
-         	if(j==3 || j==5 || j==6 ||j>8)
+         	if(j!=NE && j!=NW && j!=SE && j!=SW)
             	ret+=2;
             else
             	ret++;
@@ -315,7 +313,7 @@ int calcredpiecethreat(XBOARD* xb)
       {
       	if((j=jumpsavail(xb, i))!=NONE)
          {
-         	if(j==3 || j==5 || j==6 ||j>8)
+         	if(j!=NE && j!=NW && j!=SE && j!=SW)
             	ret+=2;
             else
             	ret++;
@@ -364,7 +362,7 @@ int checkcentre(BOARD* pboard, BOARDVALUES b)
    if(pboard->p[22] == b) ret++;
    if(pboard->p[23] == b) ret++;
 
-	return ret-1;
+	return ret;
 }
 
 
@@ -467,7 +465,7 @@ int rcentrecontrolcalc(XBOARD* xb, BOARD* pboard)
    if((pboard->p[22] == REDMAN) || (pboard->p[22] == EMPTY && redcanmoveto(xb, 24))) ret++;
    if((pboard->p[23] == REDMAN) || (pboard->p[23] == EMPTY && redcanmoveto(xb, 25))) ret++;
 
-   return ret-1;
+   return ret;
 }
 
 int bcentrecontrolcalc(XBOARD* xb, BOARD* pboard)

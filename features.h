@@ -50,6 +50,7 @@ int piecetake(BOARD* b);
 int threat(BOARD* b);
 
 //caculate next bit
+int firstbit(BOARD* b);
 int calculatenextbit(BOARD* b);
 
 
