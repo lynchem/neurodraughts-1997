@@ -206,7 +206,7 @@ int DraughtsGame::MakeBlackMove(void)
    if(smove.from == -1)
    	return REDWON;
    else if(smove.exchange)
-    	s = applyexchange(&xb, smove.from, smove.to);
+    	applyroute(&xb, &smove);
    else
 	 	applymove(&xb, smove.from, smove.to );
 
@@ -257,7 +257,7 @@ int DraughtsGame::MakeRedMove(void)
    if(smove.from == -1)
    	return BLACKWON;
    else if(smove.exchange)
-    	s = applyexchange(&xb, smove.from, smove.to);
+    	applyroute(&xb, &smove);
    else
 	 	applymove(&xb, smove.from, smove.to );
 

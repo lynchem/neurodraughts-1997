@@ -27,7 +27,7 @@
 #define BLACKPLAYER	1
 #define REDPLAYER		2
 
-#define MAXJUMPS		16
+#define MAXJUMPS		64
 #define MAXMOVES		64
 
 float SuggestMove(BOARD* b, MOVE* m, DirectNet* d, int player, int totaldepth, int depth, float* best, float* worst);

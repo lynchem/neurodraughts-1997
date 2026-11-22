@@ -19,7 +19,6 @@
 using namespace std;
 
 inline int otherplayer(int p);
-int jumpcalc(XBOARD* xb, int pos, int dir);
 
 /* the func - minimum and maximum correspond to alpha and beta repsectively.
 	These names used instead as they better convey their use
@@ -73,21 +72,9 @@ float SuggestMove(BOARD* b, MOVE* m, DirectNet* net, int player, int totaldepth,
          pos = maptoxcoord(i);
 		   j = jumpsavail(&xb, pos);
 
-		   //jumps?
+		   //jumps? record every route
 		   if (j != NONE)
-         {
-			   //for each jump - record
-	         for(dir=1; dir<=8; dir=dir*2)
-	         {
-				   if((j & dir)==dir)
-               {
-               	copyboard(&temp,&xb);
-				 	   jumps[numjumps].from = pos;
-				      jumps[numjumps].to = jumpcalc(&temp,pos,dir);
-   			      numjumps++;
-               }
-	         }
-         }
+				numjumps = captureroutes(&xb, pos, jumps, numjumps, MAXJUMPS);
          else
          {
 				//where can i move to?
@@ -101,6 +88,8 @@ float SuggestMove(BOARD* b, MOVE* m, DirectNet* net, int player, int totaldepth,
 					   {
 					 	   moves[nummoves].from = pos;
 					      moves[nummoves].to = pos+poscalc(dir);
+					      moves[nummoves].exchange = 0;
+					      moves[nummoves].jumps = 0;
 					      nummoves++;
 					   }
                }
@@ -111,9 +100,7 @@ float SuggestMove(BOARD* b, MOVE* m, DirectNet* net, int player, int totaldepth,
 	//single jump - return straight no choice
    if(top && (numjumps == 1))
    {
-	   m->from = jumps[0].from;
-	   m->to	 = jumps[0].to;
-   	m->exchange = 1;
+	   *m = jumps[0];
       return 0;
    }
    //single move - return straight no choice, unless some piece can capture
@@ -136,7 +123,7 @@ float SuggestMove(BOARD* b, MOVE* m, DirectNet* net, int player, int totaldepth,
 	   for(i=0; i<numjumps; i++)
 	   {
 	      copyboard(&temp, &xb);
-		   applyexchange(&temp, jumps[i].from, jumps[i].to);
+		   applyroute(&temp, &jumps[i]);
 
 		   //only want to evaluate on depth =0
 		   if(depth == 0)
@@ -173,11 +160,7 @@ float SuggestMove(BOARD* b, MOVE* m, DirectNet* net, int player, int totaldepth,
             {
 	           	besteval = res;
                if(top)
-               {
-	               m->from = jumps[i].from;
-		            m->to	 = jumps[i].to;
-	               m->exchange = 1;
-               }
+	               *m = jumps[i];
             }
          }
 
@@ -259,31 +242,3 @@ inline int otherplayer(int p)
 	if(p==BLACKPLAYER) return REDPLAYER;
    else return BLACKPLAYER;
 }
-
-/* calculate the finishing position for ajump */
-int jumpcalc(XBOARD* xb, int pos, int dir)
-{
-	int finished;
-   int nowat;
-   int j;
-
-	finished = jumppiece(xb, pos, dir);
-   nowat = pos + (poscalc(dir) * 2);
-   while(!finished)
-   {
-		if((j = jumpsavail(xb,nowat))!=NONE)
-      {
-        	//because it's unlikely to branch at this stage... (fingers crossed) only one is considered
-	      if ((j & NE)==NE) j = NE;
-	      if ((j & NW)==NW) j = NW;
-	      if ((j & SE)==SE) j = SE;
-	      if ((j & SW)==SW) j = SW;
-	      finished = jumppiece(xb, nowat, j);
-	      nowat = nowat + (poscalc(j) * 2);
-      }
-      else
-      	finished = 1;
-   }
-   return nowat;
-}
-

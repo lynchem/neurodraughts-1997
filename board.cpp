@@ -418,6 +418,67 @@ int applyexchange(XBOARD* b, int from, int to)
 }
 
 
+/* adds every route on from square at to the list, the jumps so far being
+	in route. A route goes on while the piece can capture again, and ends
+   when a man is crowned. Returns the number of routes in the list. */
+static int addroutes(XBOARD* xb, int at, MOVE* route, MOVE* list, int n, int max)
+{
+	int j, dir, next;
+   XBOARD temp;
+
+   j = jumpsavail(xb, at);
+   for(dir = 1; dir <= 8; dir = dir*2)
+   {
+   	if((j & dir) == dir)
+      {
+      	copyboard(&temp, xb);
+         next = at + poscalc(dir)*2;
+         route->route[route->jumps++] = dir;
+         if(jumppiece(&temp, at, dir) || jumpsavail(&temp, next) == NONE)
+         {
+         	//crowned, or nothing more to take: the route ends here
+            if(n < max)
+            {
+            	list[n] = *route;
+               list[n].to = next;
+               n++;
+            }
+            else
+            	cerr<<"Too many capture routes from "<<route->from<<"\n";
+         }
+         else
+         	n = addroutes(&temp, next, route, list, n, max);
+         route->jumps--;
+      }
+   }
+   return n;
+}
+
+/* lists every capture route for the piece on pos, adding them to list from
+	index n. Returns the number of routes in the list. */
+int captureroutes(XBOARD* xb, int pos, MOVE* list, int n, int max)
+{
+	MOVE route;
+
+   route.from = pos;
+   route.exchange = 1;
+   route.jumps = 0;
+   return addroutes(xb, pos, &route, list, n, max);
+}
+
+/* plays a capture route found by captureroutes */
+void applyroute(XBOARD* b, MOVE* m)
+{
+	int i, at;
+
+   at = m->from;
+   for(i = 0; i < m->jumps; i++)
+   {
+   	jumppiece(b, at, m->route[i]);
+      at = at + poscalc(m->route[i])*2;
+   }
+}
+
 /* applys a jump in a given direction --- returns promocheck() */
 int jumppiece(XBOARD* b, int from, int j)
 {

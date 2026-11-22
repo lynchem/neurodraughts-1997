@@ -36,11 +36,15 @@ struct XBOARD
 	int	p[36];
 };
 
+#define MAXROUTE	12
+
 struct MOVE
 {
 	int from;
    int to;
    int exchange;
+   int route[MAXROUTE];	//a capture: the direction of each jump
+   int jumps;					//and how many jumps there are
 };
 
 //init board
@@ -92,6 +96,10 @@ void applymove(XBOARD* b, int from, int to);
 
 /* recursive function to find the path of a jump given start and finish */
 int applyexchange(XBOARD* b, int from, int to);
+
+/* every capture route for one piece, and playing one of them */
+int captureroutes(XBOARD* xb, int pos, MOVE* list, int n, int max);
+void applyroute(XBOARD* b, MOVE* m);
 
 void mirrorboard(XBOARD* b);
 void reversealign(XBOARD* b);
