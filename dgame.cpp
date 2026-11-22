@@ -151,26 +151,31 @@ void	DraughtsGame::EndGame(int whowon)
 	//if we're training it
 	if(training1)
    {
-   	//if he's black
-	  	if(opp1_is_black)
-	   {
-	    	if(whowon == BLACKWON)
-		     	bnet->TDFinal(WINVALUE);
-	      else if(whowon == REDWON)
-	      	bnet->TDFinal(LOSEVALUE);
-	   	else
-         	bnet->TDFinal(DRAWB);
-	   }
-	   else
-	   {
-      	//otherwise he's red
-	   	if(whowon == REDWON)
-				rnet->TDFinal(WINVALUE);
-	      else if(whowon == BLACKWON)
-	      	rnet->TDFinal(LOSEVALUE);
-	   	else
-         	rnet->TDFinal(DRAWR);
-	   }
+   	DirectNet* learner = opp1_is_black ? bnet : rnet;
+      float black, red;
+
+      //the result for each side
+     	if(whowon == BLACKWON)
+      {
+      	black = WINVALUE;
+         red = LOSEVALUE;
+      }
+      else if(whowon == REDWON)
+      {
+      	black = LOSEVALUE;
+         red = WINVALUE;
+      }
+      else
+      {
+      	black = DRAWB;
+         red = DRAWR;
+      }
+
+      //its own positions, then its opponent's
+      learner->TDFinal(opp1_is_black ? black : red);
+      learner->SwapTrace();
+      learner->TDFinal(opp1_is_black ? red : black);
+      learner->SwapTrace();
    }
 
    //cleanup file
@@ -223,6 +228,16 @@ int DraughtsGame::MakeBlackMove(void)
       else
         	bnet->TDTrain(&gameboard,0);
    }
+   //the learner is red: it learns from black's position too, as black
+   else if(training1)
+   {
+   	rnet->SwapTrace();
+   	if(movenum == 0)
+			rnet->InitTDTrain(&gameboard, gamma, lambda, 0);
+      else
+        	rnet->TDTrain(&gameboard,0);
+   	rnet->SwapTrace();
+   }
 
    //record PDN data
    if(recording)
@@ -271,6 +286,16 @@ int DraughtsGame::MakeRedMove(void)
       	rnet->InitTDTrain(&gameboard, gamma, lambda,1);
       else
         	rnet->TDTrain(&gameboard,1);
+   }
+   //the learner is black: it learns from red's position too, as red
+   else if(training1)
+   {
+   	bnet->SwapTrace();
+   	if(movenum == 0)
+      	bnet->InitTDTrain(&gameboard, gamma, lambda,1);
+      else
+        	bnet->TDTrain(&gameboard,1);
+   	bnet->SwapTrace();
    }
 
    movenum++;

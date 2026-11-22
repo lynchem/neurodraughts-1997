@@ -72,6 +72,7 @@ public:
 	void 	InitTDTrain(BOARD* board, float gamma, float lambda, int swapboard);
 	void 	TDTrain(BOARD* board, int swapboard);
    void 	TDFinal(float evalue);
+   void 	SwapTrace();
 
 	float EvaluateNet(BOARD* pboard);
    void 	SaveNet(const string& fname);

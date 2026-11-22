@@ -50,6 +50,13 @@ private:
    float*	elig3;			//eligibility trace for in - out layer
 
    float		oldoutput;		//previous output - for TD
+
+   //a second chain of TD training: the traces and previous output for the
+   //positions of the other player. SwapTrace() swaps the two chains over.
+   float**	elig1b;
+   float*	elig2b;
+   float*	elig3b;
+   float		oldoutputb;
    float		outputunit; 	//output value. ie. evaluation
 
    float		maxerr, avgerr;//keep track of error in net
@@ -87,6 +94,7 @@ public:
 	void 	InitTDTrain(float* iv, float gamma, float lambda);
 	void 	TDTrain(float* iv);
    void 	TDFinal(float evalue);
+   void 	SwapTrace();
    void 	SetLRate1(float lrate);
    void 	SetLRate2(float lrate);
    void 	SetMomentum(float momentum);

@@ -204,6 +204,12 @@ void DirectNet::TDTrain(BOARD* pboard, int swapboard)
    net->TDTrain(iv);
 }
 
+/* SwapTrace: switch to the other chain of TD training */
+void DirectNet::SwapTrace()
+{
+	net->SwapTrace();
+}
+
 /* TDFinal: Give final reward to the network */
 void DirectNet::TDFinal(float evalue)
 {

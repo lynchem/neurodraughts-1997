@@ -47,21 +47,25 @@ EvalNet::~EvalNet()
        free(weights1[i]);
        free(oldweights1[i]);
        free(elig1[i]);
+       free(elig1b[i]);
    }
 
    free(weights1);
    free(oldweights1);
    free(elig1);
+   free(elig1b);
 
    //free up weights2 - oldweights2 & elig2
 	free(weights2);
 	free(oldweights2);
    free(elig2);
+   free(elig2b);
 
    //free up weights3 - oldweights3 & elig3
 	free(weights3);
 	free(oldweights3);
    free(elig3);
+   free(elig3b);
 
    //free up hidden unit storage
    free(hiddenunits);
@@ -507,6 +511,22 @@ void EvalNet::AllocateMem()
 
    elig2	= floatalloc(numhidden+1);
    elig3	= floatalloc(numinputs+1);
+
+   //and for the second chain
+   elig1b	= pfloatalloc(numinputs+1);
+   for (i=0; i<= numinputs; i++)
+   	elig1b[i] = floatalloc(numhidden);
+   elig2b	= floatalloc(numhidden+1);
+   elig3b	= floatalloc(numinputs+1);
+}
+
+/* swaps the chain of TD training in use for the other one */
+void EvalNet::SwapTrace()
+{
+	float** t1 = elig1;	elig1 = elig1b;	elig1b = t1;
+   float*  t2 = elig2;	elig2 = elig2b;	elig2b = t2;
+   float*  t3 = elig3;	elig3 = elig3b;	elig3b = t3;
+   float   o  = oldoutput;	oldoutput = oldoutputb;	oldoutputb = o;
 }
 
 /* floatalloc accepts size of float array to be created and return pointer to it */
