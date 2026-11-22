@@ -21,6 +21,8 @@
 #include "dgame.h"
 #include <time.h>
 #include <iostream>
+#include <cstring>
+#include <cstdlib>
 
 using namespace std;
 
@@ -183,8 +185,8 @@ int main(int argc, char** argv)
          //read extra parameters
          boardf>>drawb>>drawr>>pointstoclone;
 
-	     	game->AutoPlay(NULL, TRAIN_OPP1, testafter, &gameboard, gamma, lambda, opp1, opp2, drawb, drawr);
-	     	int wins = game->AutoPlay(savegamefile, NULL, 2, &gameboard, 0.0, 0.0, opp1, opp2, 0.0, 0.0);
+	     	game->AutoPlay("", TRAIN_OPP1, testafter, &gameboard, gamma, lambda, opp1, opp2, drawb, drawr);
+	     	int wins = game->AutoPlay(savegamefile, 0, 2, &gameboard, 0.0, 0.0, opp1, opp2, 0.0, 0.0);
          if(wins<pointstoclone && won == 1) won = 0;
       }
       boardf.close();

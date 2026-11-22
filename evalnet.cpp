@@ -74,6 +74,7 @@ EvalNet::~EvalNet()
 EvalNet::EvalNet(int ninputs, int nhidden, bool dlinks, unsigned theseed, float lowrange, float highrange, float bias, const string& name)
 {
    SetBias(bias);
+   this->name = 0;
 
   	numinputs = ninputs;
    numhidden = nhidden;
@@ -362,7 +363,7 @@ void EvalNet::SaveNet(const string& savefile)
       return;
    }
 	//save name!
-   sf<<name<<endl;
+   sf<<*name<<endl;
 
    //save dimensions first
    sf<<numinputs<<" "<<numhidden<<" "<<directlinks<<endl;

@@ -115,6 +115,7 @@ void	DraughtsGame::InitGame(const string& fname, BOARD* board, int train)
    char 	buf[64];
 
    copyordboard(&gameboard, board);
+   recording = 0;
 
    /*if(fname != NULL)
    {
@@ -191,7 +192,7 @@ int DraughtsGame::MakeBlackMove(void)
 	MOVE 		smove;
    XBOARD 	xb;
    float 	best, worst;
-   int 		s;
+   int 		s = 0;
 
    best = -1;
    worst =+1;
@@ -246,7 +247,7 @@ int DraughtsGame::MakeRedMove(void)
    float best, worst;
    best = -1;
    worst =+1;
-   int s;
+   int s = 0;
 
    maptoxboard(&gameboard, &xb);
 
