@@ -345,7 +345,7 @@ void EvalNet::UpdateElig(float* iv)
 
    for (i=0; i<numhidden; i++)
       for (j=0;j<=numinputs;j++)
-	      elig1[j][i]= (LAMBDA * elig1[j][i]) + (deriv * weights1[j][i] * DERIV(hiddenunits[i]) * iv[j]);
+	      elig1[j][i]= (LAMBDA * elig1[j][i]) + (deriv * weights2[i] * DERIV(hiddenunits[i]) * iv[j]);
 }
 
 
