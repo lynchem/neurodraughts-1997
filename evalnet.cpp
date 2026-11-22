@@ -337,15 +337,15 @@ void EvalNet::UpdateElig(float* iv)
    if(directlinks)
    {
 		for (i=0; i<=numinputs; i++)
-		   elig3[i] = (LAMBDA*elig3[i]) + (deriv*iv[i]);
+		   elig3[i] = (GAMMA*LAMBDA*elig3[i]) + (deriv*iv[i]);
    }
 
 	for (i=0; i<=numhidden; i++)
-	    elig2[i] = (LAMBDA*elig2[i]) + (deriv*hiddenunits[i]);
+	    elig2[i] = (GAMMA*LAMBDA*elig2[i]) + (deriv*hiddenunits[i]);
 
    for (i=0; i<numhidden; i++)
       for (j=0;j<=numinputs;j++)
-	      elig1[j][i]= (LAMBDA * elig1[j][i]) + (deriv * weights2[i] * DERIV(hiddenunits[i]) * iv[j]);
+	      elig1[j][i]= (GAMMA * LAMBDA * elig1[j][i]) + (deriv * weights2[i] * DERIV(hiddenunits[i]) * iv[j]);
 }
 
 
