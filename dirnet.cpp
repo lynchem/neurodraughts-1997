@@ -24,6 +24,8 @@ DirectNet::DirectNet(int typeofnet, int numhidden, bool dlinks, unsigned seed,
 	int numinputs;
 
    whatami = typeofnet;
+   input_map = 0;
+   input_width = 0;
 
 	//depending on typeofnet, allocate correct inputs
 	if(typeofnet == NET_BINARYMAP)
@@ -46,6 +48,9 @@ DirectNet::DirectNet(const string& fname, const string& featuref, float bias)
 {
 	int numinputs, numbits;
 
+   input_map = 0;
+   input_width = 0;
+
    //load it up
  	net = new EvalNet(fname, bias);
 
@@ -60,6 +65,7 @@ DirectNet::DirectNet(const string& fname, const string& featuref, float bias)
    else
    	whatami = NET_FEATUREMAP;
 
+   numbits = numinputs;
    if(whatami == NET_FEATUREMAP)
    	numbits = SetupFeatures(featuref);
 
@@ -243,16 +249,17 @@ void DirectNet::mapfeatures(BOARD* pboard)
    //what kind of mapping do we preform?
    if(whatami == NET_BINARYMAP)
    {
-		for (i=0; i<32; i+=3)
+		//three inputs for each of the 32 squares
+		for (i=0; i<96; i+=3)
 	   {
 	    	iv[i] = iv[i+1] = iv[i+2] = OFFVALUE;
-	   	if(pboard->p[i+1] == BLACKMAN)
+	   	if(pboard->p[i/3+1] == BLACKMAN)
 	        	iv[i+2]=ONVALUE;
-	      else if(pboard->p[i+1] == REDMAN)
+	      else if(pboard->p[i/3+1] == REDMAN)
 	      	iv[i+1]=ONVALUE;
-	      else if(pboard->p[i+1] == BLACKKING)
+	      else if(pboard->p[i/3+1] == BLACKKING)
 	      	iv[i+1] = iv[i+2] = ONVALUE;
-	      else if(pboard->p[i+1] == REDKING)
+	      else if(pboard->p[i/3+1] == REDKING)
 	      	iv[i] = ONVALUE;
 	   }
    }
@@ -260,7 +267,7 @@ void DirectNet::mapfeatures(BOARD* pboard)
    else if(whatami == NET_DIRECTMAP)
    {
    	for(i=0; i<32; i++)
-      	iv[i] = pboard->p[i+1] / 4;
+      	iv[i] = pboard->p[i+1] / 4.0;
    }
    //must be feature mapping
    else
