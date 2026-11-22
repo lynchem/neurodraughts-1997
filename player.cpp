@@ -116,8 +116,8 @@ float SuggestMove(BOARD* b, MOVE* m, DirectNet* net, int player, int totaldepth,
    	m->exchange = 1;
       return 0;
    }
-   //single move - return straight no choice
-   if(top && (nummoves == 1))
+   //single move - return straight no choice, unless some piece can capture
+   if(top && (numjumps == 0) && (nummoves == 1))
    {
 	   m->from = moves[0].from;
 	   m->to	 = moves[0].to;
